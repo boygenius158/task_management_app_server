@@ -29,7 +29,10 @@ app.use(
 // Configure CORS with credentials
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "task-management-app-client-red.vercel.app",
+    ],
     credentials: true,
   })
 );
@@ -37,7 +40,10 @@ app.use(
 // Set up Socket.IO
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "task-management-app-client-red.vercel.app",
+    ],
     methods: ["GET", "POST", "PATCH"],
   },
 });
