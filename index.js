@@ -31,7 +31,7 @@ app.use(
     origin:
     [ 
       "http://localhost:3000",
-      "task-management-app-client-red.vercel.app",
+      "https://tmdapplication.vercel.app",
     ],
     credentials: true,
   })
@@ -41,7 +41,7 @@ const io = socketIo(server, {
   cors: {
     origin: [
       "http://localhost:3000",
-      "task-management-app-client-red.vercel.app",
+      "https://tmdapplication.vercel.app",
     ],
     methods: ["GET", "POST", "PATCH"],
   },
