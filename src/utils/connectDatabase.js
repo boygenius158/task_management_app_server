@@ -8,8 +8,6 @@ const connectDatabase = async () => {
     useUnifiedTopology: true, // Use the new topology engine.
     serverSelectionTimeoutMS: 30000, // Timeout after 30 seconds if no server is selected.
     socketTimeoutMS: 45000, // Timeout for socket inactivity after 45 seconds.
-    reconnectTries: Number.MAX_VALUE, // Keep trying to reconnect indefinitely.
-    reconnectInterval: 5000, // Retry every 5 seconds if the connection fails.
   };
 
   try {
@@ -17,8 +15,8 @@ const connectDatabase = async () => {
     console.log("Database connected successfully");
   } catch (error) {
     console.error("Database connection error:", error.message);
-    // Optionally retry connection after some time
-    setTimeout(connectDatabase, 5000); // Retry after 5 seconds
+    // Retry after 5 seconds in case of an error
+    setTimeout(connectDatabase, 5000);
   }
 };
 
