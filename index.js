@@ -28,7 +28,8 @@ app.use(
 
 app.use(
   cors({
-    origin: [
+    origin:
+    [ 
       "http://localhost:3000",
       "task-management-app-client-red.vercel.app",
     ],

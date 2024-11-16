@@ -4,6 +4,8 @@ const UserModel = require("../model/User");
 const JWT_SECRET_KEY = "albinshiju";
 
 const registerUser = async (req, res) => {
+  console.log("register");
+
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -29,44 +31,67 @@ const registerUser = async (req, res) => {
 
 // Login user
 const loginUser = async (req, res) => {
+  console.log("Logging in user");
+
   const { email, password } = req.body;
 
+  // Check if email and password are provided
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
   try {
+    // Find user by email
     const user = await UserModel.findOne({ email });
+
     if (!user) {
-      return res.status(400).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
+    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid password" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET_KEY);
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      JWT_SECRET_KEY,
+      { expiresIn: '1h' } // Token expires in 1 hour
+    );
 
+    // Set token in session and cookie
     req.session.token = token;
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: false, // Not secure in dev, adjust for production
-      maxAge: 3600 * 1000, // 1 hour
-    });
 
+    // Use secure cookies in production
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Secure cookies in production
+      maxAge: 3600 * 1000, // 1 hour
+    };
+
+    res.cookie("authToken", token, cookieOptions);
+
+    // Send user profile and token
     const userProfile = {
       _id: user._id,
       name: user.name,
       email: user.email,
     };
 
-    res.status(200).json({ message: "Login successful", token, userProfile });
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      userProfile,
+    });
   } catch (error) {
     console.error("Error logging in user:", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 // Check authentication
 const checkAuth = async (req, res) => {
