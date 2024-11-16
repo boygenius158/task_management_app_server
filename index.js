@@ -6,13 +6,13 @@ const session = require("express-session");
 const socketIo = require("socket.io");
 const cookieParser = require("cookie-parser");
 const connectDatabase = require("./src/utils/connectDatabase");
-const authRoutes = require('./src/route/authRoutes');
+const authRoutes = require("./src/route/authRoutes");
 const {
   addTaskHandler,
   getTasksHandler,
   toggleTaskCompletionHandler,
   deleteTaskHandler,
-  editTaskHandler
+  editTaskHandler,
 } = require("./src/handlers/socketHandlers");
 
 const app = express();
@@ -22,21 +22,34 @@ const JWT_SECRET_KEY = "albinshiju";
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(session({ secret: JWT_SECRET_KEY, resave: false, saveUninitialized: true }));
+app.use(
+  session({ secret: JWT_SECRET_KEY, resave: false, saveUninitialized: true })
+);
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "task-management-app-client-red.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "task-management-app-client-red.vercel.app",
+    ],
     credentials: true,
   })
 );
 
 const io = socketIo(server, {
-  cors: { origin: ["http://localhost:3000", "task-management-app-client-red.vercel.app"], methods: ["GET", "POST", "PATCH"] }
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "task-management-app-client-red.vercel.app",
+    ],
+    methods: ["GET", "POST", "PATCH"],
+  },
 });
 
 app.use("/api", authRoutes);
-
+app.get("/test", (req, res) => {
+  res.send("test success");
+});
 // Connect to the database
 connectDatabase();
 
